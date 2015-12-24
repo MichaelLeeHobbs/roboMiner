@@ -6,6 +6,7 @@
 'use strict';
 import Thing from '../api/thing/thing.model';
 import User from '../api/user/user.model';
+import Host from '../api/host/host.model';
 
 Thing.find({}).removeAsync()
   .then(() => {
@@ -55,5 +56,13 @@ User.find({}).removeAsync()
     })
     .then(() => {
       console.log('finished populating users');
+    });
+  });
+
+Host.find({}).removeAsync()
+  .then(() => {
+    Host.createAsync({
+      name: 'localhost',
+      port: 9000
     });
   });
