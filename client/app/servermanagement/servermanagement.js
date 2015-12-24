@@ -3,9 +3,10 @@
 angular.module('roboMinerApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('servermanagement', {
+      .state('srvrManagement', {
         url: '/servermanagement',
         templateUrl: 'app/servermanagement/servermanagement.html',
-        controller: 'ServermanagementCtrl'
+        controller: 'ServerManagementCtrl',
+        controllerAs: 'srvrManagement'
       });
   });
