@@ -16,11 +16,19 @@ import _ from 'lodash';
 var Server = require('./server.model');
 var MSM = require('../../libraries/msm.js/server.js');
 import ServerManager from './ServerManager';
-let serverManager = new ServerManager();
+let serverManager = new ServerManager(Server);
 
-console.log('starting monitor');
-serverManager.addServer({"name":"test","status":"INACTIVE","message":"Everything is OK."});
-serverManager.startMonitor();
+  console.log('starting monitor');
+  Server.find({}).then(servers => {
+      servers.forEach(server => {
+        serverManager.addServer(server)
+      })
+    })
+    .then(() => serverManager.startMonitor())
+    .catch((err) => console.log(err));
+
+
+
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
@@ -73,17 +81,11 @@ function removeEntity(res) {
 export function index(req, res) {
   // todo test code
 
-  console.log('MSM.list()');
-  //var intervalID = setInterval(function() {
-  MSM.list(function (err, servers) {
-    if (err) {
-      handleError(res);
-    } else {
-      responseWithResult(res)(servers);
-    }
-  });
-  //}, 2000);
+  console.log('MSM.server().list()');
 
+  MSM.global.listServers()
+    .then(responseWithResult(res))
+    .catch(handleError(res));
 
   // todo test code
   /*
@@ -127,9 +129,8 @@ export function restart(req, res) {
       (responseWithResult(res))(result)
     }
   };
-  var now = true;
   console.log('restarting ' + req.params.id);
-  MSM.restart(req.params.id, next, now);
+  MSM.server(req.params.id).restart(now=false);
 }
 
 // Deletes a Server from the DB

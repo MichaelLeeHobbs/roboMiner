@@ -7,6 +7,7 @@
 import Thing from '../api/thing/thing.model';
 import User from '../api/user/user.model';
 import Host from '../api/host/host.model';
+import Server from '../api/server/server.model';
 
 Thing.find({}).removeAsync()
   .then(() => {
@@ -39,7 +40,7 @@ Thing.find({}).removeAsync()
              'and openshift subgenerators'
     });
   });
-
+var adminId;
 User.find({}).removeAsync()
   .then(() => {
     User.createAsync({
@@ -54,6 +55,10 @@ User.find({}).removeAsync()
       email: 'admin@example.com',
       password: 'admin'
     })
+    .then(function(){
+      User.find({name: "Admin"})
+      .then((found) => adminId = found[0]._id);
+    })
     .then(() => {
       console.log('finished populating users');
     });
@@ -65,4 +70,44 @@ Host.find({}).removeAsync()
       name: 'localhost',
       port: 9000
     });
-  });
+  });/*
+Server.find({}).removeAsync()
+  .then(() => {
+    Server.createAsync({
+      name: "test",
+      info: "some info",
+      active: true,
+      ownerId: adminId,
+      host: "localhost",
+      port: 25565,
+      mineCraftVersion: "1.8.9",
+      ram: 1024,
+      shouldRestart: true,
+      serverManagerId: "W6T3F7"
+    },
+      {
+        name: "test2",
+        info: "some info also 2",
+        active: true,
+        ownerId: adminId,
+        host: "localhost",
+        port: 25566,
+        mineCraftVersion: "1.8.9",
+        ram: 1024,
+        shouldRestart: true,
+        serverManagerId: "W6T3F7"
+      },
+      {
+        name: "test3",
+        info: "some info",
+        active: true,
+        ownerId: adminId,
+        host: "localhost",
+        port: 25567,
+        mineCraftVersion: "1.8.9",
+        ram: 1024,
+        shouldRestart: true,
+        serverManagerId: "W6T3F7"
+      }
+    );
+  });*/
