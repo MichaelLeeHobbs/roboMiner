@@ -29,61 +29,59 @@ function handleError(msg) {
 }
 
 
-
 export default class ServerManager {
-  constructor(mongoServer, maxRestartAttempts, restartTime, pollInterval) {
+  constructor(mongoServer, maxRestartAttempts = 5, restartTime = 60000, pollInterval = 5000) {
+    console.log('constructor');
     this.mongoServer = mongoServer;
     this.servers = {};
     this.serversMap = {};
-    this.pollInterval = pollInterval || 5000;
+    this.pollInterval = pollInterval;
     this.intervalID = -1;
-    this.maxRestartAttempts = maxRestartAttempts || 5;
-    this.restartTime = restartTime || 60;
+    this.maxRestartAttempts = maxRestartAttempts;
+    this.restartTime = restartTime;
   }
 
   // server = server.model.js object
   addServer(server) {
-    console.log("adding " +server.name);
+    var self = this;
+    console.log("Now managing " + server.name);
     if (this.servers.hasOwnProperty(server._id)) {
+      console.log('Already managing ' + server.name);
       // we already have a server with that name
       return false;
     }
-    // add the server
-    this.servers[server._id] = server;
-    this.serversMap[server.name] = server._id;
 
-    // update its msm config as msm sees it
-    this.updateMsmPropsFromServer(server);
-    // update its mc config as msm sees it
-    this.updateMcPropsFromServer(server);
 
+    // update its properties as msm sees it
+    this.updateServerProps(server);
+    console.log('restting restartAttempts');
+    // set restart attempts to zero
+    this.mongoServer.findById(server._id)
+      .then(saveUpdates({restartAttempts: 0}))
+      .then((server) => {
+        console.log("test");
+        self.servers[server._id] = server;
+        self.serversMap[server.name] = server._id;
+        return server;
+      })
+      .catch(handleError('Todo: Something bad happened here'));
   }
-  updateMcPropsFromServer(server) {
+
+  updateServerProps(server) {
     var self = this;
     var failedToFind = "";
-    var failedToGet = 'Failed to get mcConfig for: ';
-    return MSM.server(server.name).config.getMc()
-      .then(function(mcConfig) {
-        self.mongoServer.findByIdAsync(server._id)
-        //todo .then(handleEntityNotFound)
-        .then(aServer => aServer.mcProp = mcConfig);
-        // todo .catch(handleError);
+    var failedToGet = 'updateMcPropsFromServer: Failed to get mcConfig for: ';
+
+    return MSM.server(server.name).config.getProperties()
+      .then((serverProps) => {
+        self.mongoServer
+          .findByIdAsync(server._id)
+          .then(saveUpdates(serverProps))
+          .catch(handleError('Todo: Something bad happened here'));
       })
       .catch(handleError(failedToGet + server.name));
   }
-  updateMsmPropsFromServer(server) {
-    var self = this;
-    var failedToFind = "";
-    var failedToGet = 'Failed to get msmConfig for: ';
-    return MSM.server(server.name).config.getMsm()
-      .then(function(mcConfig) {
-        self.mongoServer.findByIdAsync(server._id)
-          //todo .then(handleEntityNotFound)
-          .then(aServer => aServer.msmProp = mcConfig);
-        // todo .catch(handleError);
-      })
-      .catch(handleError(failedToGet + server.name));
-  }
+
   createServer(server) {
     // todo
     console.log('todo: implement createServer ' + server);
@@ -102,34 +100,42 @@ export default class ServerManager {
         servers.forEach(function (ele) {
           if (self.serversMap.hasOwnProperty(ele.name)) {
             var update = {
-              status: (ele.status === 'ACTIVE'),
-              state: (ele.message !== 'Everything is OK!') ? 'running' : 'error',
-              message: ele.message
+              status: ele.status,
+              state: (ele.message === 'Everything is OK.') ? 'running' : 'error',
+              message: ele.message,
+              stateTimeStamp: new Date(),
             };
-            self.mongoServer.findById(self.serversMap[ele.name])
-            .then(saveUpdates(update));
+            self.mongoServer
+              .findById(self.serversMap[ele.name])
+              .then(saveUpdates(update))
+              .then((updated) => {
+                self.servers[updated._id] = updated;
+              })
+              .catch(handleError('Todo: Something bad happened here'));
             // todo catch
           }
         });
       });
   }
 
+  // todo restart works but reports a failure
   restartServer(server) {
     var self = this;
     console.log('restarting ' + server.name);
-    MSM.server(server.name).restart(now=false)
-      .then(function(result){
+    MSM.server(server.name).restart()
+      .then(function (result) {
         console.log(server.name + ' was successful restarted: ' + result);
         var update = {
-          stateTimeStamp: new Date(),
+          restartTimeStamp: new Date(),
           restartAttempts: 0,
+          restartCount: self.servers[self.serversMap[server.name]._id].restartCount + 1,
           state: "running"
         };
         self.mongoServer.findById(server._id)
-          .then(saveUpdates(update));
-
+          .then(saveUpdates(update))
+          .catch(handleError('Todo: Something bad happened here'));
       })
-      .catch(function(err){
+      .catch(function (err) {
         console.log(server.name + ' failed restarted, error: ' + err.error + ' error msg: ' + err.msg);
       });
   }
@@ -142,19 +148,25 @@ export default class ServerManager {
       self.updateServersStatus();
 
       // check if any servers are down
-      for (var server in self.serversMap) {
-        console.log("Checking: " + server);
+      for (var serverName in self.serversMap) {
+        var server = self.servers[self.serversMap[serverName]];
+
         // todo improve handling of different states
-        if (server.state !== 'running' && server.status && server.shouldRestart && server.restartAttempts < self.maxRestartAttempts) {
+        if (server.state !== 'running' &&
+          server.shouldRestart &&
+          server.restartAttempts < self.maxRestartAttempts) {
+
           var now = new Date();
-          if (now - server.stateTimeStamp > self.restartTime) {
+          if (now - server.restartTimeStamp > self.restartTime) {
+
             var update = {
-              stateTimeStamp: now,
+              restartTimeStamp: now,
               restartAttempts: server.restartAttempts + 1,
               state: "restarting"
             };
             self.mongoServer.findById(server._id)
-              .then(saveUpdates(update));
+              .then(saveUpdates(update))
+              .catch(handleError('Todo: Something bad happened here'));
             self.restartServer(server);
           }
 

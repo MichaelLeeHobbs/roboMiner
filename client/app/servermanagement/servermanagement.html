@@ -4,7 +4,9 @@
     <div class="col-lg-12">
       <h1 class="page-header">Features:</h1>
       <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="server in srvrManagement.servers">
-        <li><a href="#" tooltip="{{server.message}}">{{server.name}}<button type="button" class="close" ng-click="srvrManagement.restartServer(server)">&times;</button></a></li>
+        <li><a href="#" tooltip="{{server.message}}">{{server.name}}
+          <button type="button" class="close" ng-click="srvrManagement.restartServer(server)">&times;</button>
+        </a></li>
       </ul>
     </div>
   </div>
@@ -21,5 +23,59 @@
 </div>
 
 <footer></footer>
-<div>This is the servermanagement view.</div>
-<div>{{srvrManagement.servers}}</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12 serverFrame" ng-repeat="server in srvrManagement.servers">
+      <h2>{{server.name}}</h2>
+      <div class="col-lg-6">
+        <dl class="dl-horizontal">
+          <dt>ID</dt>
+          <dd>{{server._id}}</dd>
+          <dt>Name</dt>
+          <dd>{{server.name}}</dd>
+          <dt>Owner ID</dt>
+          <dd>{{server.ownerId}}</dd>
+          <dt>Host</dt>
+          <dd>{{server.host}}</dd>
+          <dt>Port</dt>
+          <dd>{{server.port}}</dd>
+          <dt>MineCraft Version</dt>
+          <dd>{{server.mineCraftVersion}}</dd>
+          <dt>Ram</dt>
+          <dd>{{server.ram}}</dd>
+          <dt>State</dt>
+          <dd>{{server.state}}</dd>
+          <dt>Status</dt>
+          <dd>{{server.status}}</dd>
+          <dt>Status Message</dt>
+          <dd>{{server.message}}</dd>
+          <dt>State/Status Time Stamp</dt>
+          <dd>{{server.stateTimeStamp}}</dd>
+          <dt>Should Restart on Failure?</dt>
+          <dd>{{server.shouldRestart}}</dd>
+          <dt>Restart Attempts</dt>
+          <dd>{{server.restartAttempts}}</dd>
+          <dt>Restart Count</dt>
+          <dd>{{server.restartCount}}</dd>
+          <dt>Server Manager ID</dt>
+          <dd>{{server.serverManagerId}}</dd>
+          <div ng-repeat="key in srvrManagement.managerKeys">
+            <dt>{{srvrManagement.cleanProperty(key)}}</dt>
+            <dd>{{server.msmProp[key]}}</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="col-lg-6">
+        <h4>MineCraft Properties:</h4>
+        <dl class="dl-horizontal">
+          <div ng-repeat="key in srvrManagement.mcKeys">
+            <dt>{{key}}</dt>
+            <dd>{{server.mineCraftProp[key]}}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

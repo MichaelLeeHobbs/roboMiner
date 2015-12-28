@@ -79,19 +79,9 @@ function removeEntity(res) {
 
 // Gets a list of Servers
 export function index(req, res) {
-  // todo test code
-
-  console.log('MSM.server().list()');
-
-  MSM.global.listServers()
-    .then(responseWithResult(res))
-    .catch(handleError(res));
-
-  // todo test code
-  /*
-   Server.findAsync()
+   Server.findAsync({}, /* todo turn this back on '-msmProp -mineCraftProp'*/)
    .then(responseWithResult(res))
-   .catch(handleError(res));*/
+   .catch(handleError(res));
 }
 
 // Gets a single Server from the DB

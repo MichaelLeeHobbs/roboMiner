@@ -7,16 +7,19 @@ var ServerSchema = new mongoose.Schema({
   info: String,
   active: Boolean,
   ownerId: String,
-  host: String,
+  host: {type: String, default: "localhost"},
   port: Number,
   mineCraftVersion: String,
-  ram: Number,
-  state: String,              // running, stopped, restarting, error
-  stateTimeStamp: Date,       // timestamp of last update, used for restarting
-  shouldRestart: Boolean,     // should we restart?
-  restartAttempts: Number,
-  restartCount: Number,
-  serverManagerId: String,
+  ram: {type: Number, default: 1024},
+  state: {type: String, default: "unknown"},              // running, stopped, restarting, error
+  status: {type: String, default: "unknown"},
+  message: {type: String, default: ""},
+  stateTimeStamp: {type: Date, default: Date.now},       // timestamp of last update
+  restartTimeStamp: {type: Date, default: Date.now},
+  shouldRestart: {type: Boolean, default: false},    // should we restart?
+  restartAttempts: {type: Number, default: 0},
+  restartCount: {type: Number, default: 0},
+  serverManagerId: {type: String, default: ""},
   mineCraftProp: {
     "allow-flight": Boolean,
     "allow-nether": Boolean,

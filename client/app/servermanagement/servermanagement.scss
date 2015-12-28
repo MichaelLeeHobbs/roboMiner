@@ -1,0 +1,17 @@
+.serverFrame {
+  border: 3px double #ccc;
+}
+
+.serverFrame h2, h4 {
+  text-align: center;
+}
+.serverFrame dt {
+  color: green;
+  min-width: 250px;
+}
+.serverFrame dt:after {
+  content: ":";
+}
+.serverFrame dd {
+  margin-left: 255px;
+}

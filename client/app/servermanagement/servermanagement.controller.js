@@ -7,17 +7,31 @@
     constructor($http, $scope, socket) {
       this.$http = $http;
       this.servers = [];
+      this.mcKeys = [];
+      this.managerKeys = [];
 
       $http.get('/api/servers').then(response => {
         this.servers = response.data;
         console.log('server api test');
         console.log(this.servers);
+        this.mcKeys = Object.keys(this.servers[1].mineCraftProp);
+        this.managerKeys = Object.keys(this.servers[1].msmProp);
+
+
+        console.log(this.mcKeys);
         socket.syncUpdates('server', this.servers);
       });
 
       $scope.$on('$destroy', function() {
         socket.unsyncUpdates('server');
       });
+    }
+
+    cleanProperty(prop) {
+      prop = prop.replace('msm-', '');
+      prop = prop.replace('message', 'msg');
+      prop = prop.replace('-', ' ');
+      return prop;
     }
 
     addServer() {
