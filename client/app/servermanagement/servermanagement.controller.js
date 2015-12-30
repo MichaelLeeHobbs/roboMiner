@@ -7,6 +7,7 @@
     constructor($http, $scope, socket) {
       this.$http = $http;
       this.servers = [];
+      this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
 
@@ -20,6 +21,10 @@
 
         console.log(this.mcKeys);
         socket.syncUpdates('server', this.servers);
+      });
+
+      $http.get('/api/servers/keys').then(response => {
+        this.serverKeys = response.data;
       });
 
       $scope.$on('$destroy', function() {

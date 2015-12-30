@@ -10,7 +10,8 @@ angular.module('roboMinerApp', [
   'btford.socket-io',
   'ui.router',
   'ui.bootstrap',
-  'validation.match'
+  'validation.match',
+  'mgcrea.ngStrap'
 ])
   .config(function($urlRouterProvider, $locationProvider) {
     $urlRouterProvider
