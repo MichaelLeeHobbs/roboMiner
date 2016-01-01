@@ -1,15 +1,20 @@
 'use strict';
 
-(function() {
+(function () {
 
   class ServerManagementController {
 
-    constructor($http, $scope, socket) {
+    constructor($http, $scope, socket, Auth) {
       this.$http = $http;
       this.servers = [];
       this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
+
+      this.isLoggedIn = Auth.isLoggedIn;
+      this.isAdmin = Auth.isAdmin;
+      this.getCurrentUser = Auth.getCurrentUser;
+
 
       $http.get('/api/servers').then(response => {
         this.servers = response.data;
@@ -27,7 +32,7 @@
         this.serverKeys = response.data;
       });
 
-      $scope.$on('$destroy', function() {
+      $scope.$on('$destroy', function () {
         socket.unsyncUpdates('server');
       });
     }
@@ -41,7 +46,7 @@
 
     addServer() {
       if (this.newServer) {
-        this.$http.post('/api/servers', { name: this.newServer });
+        this.$http.post('/api/servers', {name: this.newServer});
         this.newServer = '';
       }
     }
@@ -52,7 +57,7 @@
 
     restartServer(server) {
       this.$http.put('/api/servers/' + server.name + '/restart')
-        .then(function (result){
+        .then(function (result) {
           console.log('result');
           console.log(result);
         })
