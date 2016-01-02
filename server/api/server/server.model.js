@@ -98,6 +98,7 @@ var ServerSchema = new mongoose.Schema({
     "msm-message-world-backup-finished": String,
     "msm-message-complete-backup-started": String,
     "msm-message-complete-backup-finished": String,
+    // these are the strings msm will look for when executing said command
     "msm-confirm-save-on": String,
     "msm-confirm-save-off": String,
     "msm-confirm-save-all": String,
