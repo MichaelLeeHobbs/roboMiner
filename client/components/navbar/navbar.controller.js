@@ -5,6 +5,9 @@ class NavbarController {
   menu = [{
     'title': 'Home',
     'state': 'main'
+  },{
+    'title': 'My Servers',
+    'state': 'srvrManagement'
   }];
 
   isCollapsed = true;
