@@ -6,10 +6,21 @@
 
     constructor($http, $scope, socket, Auth) {
       this.$http = $http;
+
       this.servers = [];
+      this.serversModel = [];
       this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
+
+      this.activePanel = -1;
+      this.activePanelModel = -1;
+
+      this.panels = {};
+      this.panels.activePanel = -1;
+      this.$scope = $scope;
+
+      var self = this;
 
       this.isLoggedIn = Auth.isLoggedIn;
       this.isAdmin = Auth.isAdmin;
@@ -18,14 +29,12 @@
 
       $http.get('/api/servers').then(response => {
         this.servers = response.data;
-        console.log('server api test');
-        console.log(this.servers);
+        this.serversModel = this.servers;
         this.mcKeys = Object.keys(this.servers[1].mineCraftProp);
         this.managerKeys = Object.keys(this.servers[1].msmProp);
 
-
-        console.log(this.mcKeys);
-        socket.syncUpdates('server', this.servers);
+        // sync disable as this breaks the panels
+        //socket.syncUpdates('server', this.servers);
       });
 
       $http.get('/api/servers/keys').then(response => {

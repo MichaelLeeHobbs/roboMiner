@@ -8,8 +8,8 @@
           <button type="button" class="close" ng-click="srvrManagement.restartServer(server)">&times;</button>
         </a></li>
       </ul>
-    </div>
-  </div>
+    </div><!--/.col-lg-12-->
+  </div><!--/.row-->
 
   <form class="thing-form">
     <label>Syncs in realtime across clients</label>
@@ -20,305 +20,316 @@
       </span>
     </p>
   </form>
-</div>
-
-<footer></footer>
-
+</div><!--/.container-->
 
 <div class="container">
   <div class="row">
-    <div class="col-lg-12 col-sm-12 serverFrame" ng-repeat="server in srvrManagement.servers">
+    <div class="panel-group" ng-model="srvrManagement.activePanelModel" data-allow-multiple="false" role="tablist" aria-multiselectable="true" bs-collapse>
+      <div class="panel panel-default" ng-repeat="server in srvrManagement.serversModel">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a bs-collapse-toggle>
+              {{server.name}} -- {{server.state}} -- {{server.message}}
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+          <div class="panel-body">
+            <h3>Status as of {{server.stateTimeStamp}}</h3>
+            <div class="row">
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">State:</span>
+                  <input type="text" class="form-control" ng-model="server.state" placeholder="Place holder..." readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-      <h2>Server: {{server.name}}</h2>
-      <h4>Status Report as of {{server.stateTimeStamp}}</h4>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Report:</span>
+                  <input type="text" class="form-control" ng-model="server.message" placeholder="Place holder..." readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-      <div class="row">
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">State:</span>
-            <input type="text" class="form-control" ng-model="server.state" placeholder="Place holder..." readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Restart Attempts:</span>
+                  <input type="text" class="form-control" ng-model="server.restartAttempts" placeholder="Place holder..."
+                         readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Report:</span>
-            <input type="text" class="form-control" ng-model="server.message" placeholder="Place holder..." readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Restart Count:</span>
+                  <input type="text" class="form-control" ng-model="server.restartCount" placeholder="Place holder..."
+                         readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Restart Attempts:</span>
-            <input type="text" class="form-control" ng-model="server.restartAttempts" placeholder="Place holder..."
-                   readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+            </div><!--/.row-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Restart Count:</span>
-            <input type="text" class="form-control" ng-model="server.restartCount" placeholder="Place holder..."
-                   readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+            <div class="row">
+              <hr>
+              <h4>Settings And Information</h4>
+              <hr>
 
-      </div><!--/.row-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <label class="input-group-addon">Status:</label>
+                  <div class="btn-group" ng-model="server.status" bs-radio-group>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ACTIVE"> Active</label>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default"
+                                                          value="INACTIVE">Inactive</label>
+                  </div><!--btn group-->
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-      <div class="row">
-        <hr>
-        <h4>Settings And Information</h4>
-        <hr>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <label class="input-group-addon">Restart On Failiure?</label>
+                  <div class="btn-group" ng-model="server.shouldRestart" bs-radio-group>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="true"> Yes</label>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default"
+                                                          value="false">No</label>
+                  </div><!--btn group-->
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <label class="input-group-addon">Status:</label>
-            <div class="btn-group" ng-model="server.status" bs-radio-group>
-              <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ACTIVE"> Active</label>
-              <label class="btn btn-default"><input type="radio" class="btn btn-default"
-                                                    value="INACTIVE">Inactive</label>
-            </div><!--btn group-->
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
-
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <label class="input-group-addon">Restart On Failiure?</label>
-            <div class="btn-group" ng-model="server.shouldRestart" bs-radio-group>
-              <label class="btn btn-default"><input type="radio" class="btn btn-default" value="true"> Yes</label>
-              <label class="btn btn-default"><input type="radio" class="btn btn-default"
-                                                    value="false">No</label>
-            </div><!--btn group-->
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
-
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Name:</span>
-            <input type="text" class="form-control" ng-model="server.name" placeholder="Place holder..." readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Name:</span>
+                  <input type="text" class="form-control" ng-model="server.name" placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
 
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Server ID:</span>
-            <input type="text" class="form-control" ng-model="server._id" placeholder="Place holder..." readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Server ID:</span>
+                  <input type="text" class="form-control" ng-model="server._id" placeholder="Place holder..." readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Owner ID:</span>
-            <input type="text" class="form-control" ng-model="server.ownerId" placeholder="Place holder..." readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Owner ID:</span>
+                  <input type="text" class="form-control" ng-model="server.ownerId" placeholder="Place holder..." readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Host:</span>
-            <input type="text" class="form-control" ng-model="server.host" placeholder="Place holder..." readonly>
-          </div><!--input group-->
-        </div><!--/.col-sm-6-->
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Host:</span>
+                  <input type="text" class="form-control" ng-model="server.host" placeholder="Place holder..." readonly>
+                </div><!--input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Port:</span>
-            <input type="text" class="form-control" ng-model="server.port" placeholder="Place holder..." readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Port:</span>
+                  <input type="text" class="form-control" ng-model="server.port" placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">MineCraft Version:</span>
-            <input type="text" class="form-control" ng-model="server.mineCraftVersion" placeholder="Place holder..."
-                   readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">MineCraft Version:</span>
+                  <input type="text" class="form-control" ng-model="server.mineCraftVersion" placeholder="Place holder..."
+                         readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Server Manager:</span>
-            <input type="text" class="form-control" ng-model="server.serverManagerId" placeholder="Place holder..."
-                   readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Server Manager:</span>
+                  <input type="text" class="form-control" ng-model="server.serverManagerId" placeholder="Place holder..."
+                         readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Stop Delay:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-stop-delay']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Stop Delay:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-stop-delay']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-3 col-sm-6">
-          <div class="input-group">
-            <span class="input-group-addon">Restart Delay:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-restart-delay']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-3 col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Restart Delay:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-restart-delay']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-      </div><!--/.row-->
+            </div><!--/.row-->
 
-      <div class="row">
-        <hr>
-        <h4>Server Messages</h4>
-        <hr>
+            <div class="row">
+              <hr>
+              <h4>Server Messages</h4>
+              <hr>
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Stop:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-stop']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Stop:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-stop']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Stop Abort:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-stop-abort']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Stop Abort:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-stop-abort']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Restart:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-restart']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Restart:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-restart']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Restart Abort:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-restart-abort']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Restart Abort:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-restart-abort']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">World Backup Started:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-world-backup-started']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">World Backup Started:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-world-backup-started']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">World Backup Finshed:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-world-backup-finished']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">World Backup Finshed:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-world-backup-finished']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Complete Backup Started:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-complete-backup-started']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Complete Backup Started:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-complete-backup-started']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-        <div class="col-lg-6 col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">Complete Backup Finshed:</span>
-            <input type="text" class="form-control" ng-model="server.msmProp['msm-message-complete-backup-finished']"
-                   placeholder="Place holder..." readonly>
+              <div class="col-lg-6 col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">Complete Backup Finshed:</span>
+                  <input type="text" class="form-control" ng-model="server.msmProp['msm-message-complete-backup-finished']"
+                         placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-          </div><!--/input group-->
-        </div><!--/.col-sm-6-->
+                </div><!--/input group-->
+              </div><!--/.col-sm-6-->
 
-      </div><!--/.row-->
+            </div><!--/.row-->
 
-      <div class="row">
-        <hr>
-        <h4>MineCraft server.properties:</h4>
-        <hr>
+            <div class="row">
+              <hr>
+              <h4>MineCraft server.properties:</h4>
+              <hr>
 
-        <div ng-repeat="key in srvrManagement.mcKeys">
+              <div ng-repeat="key in srvrManagement.mcKeys">
 
-          <div class="col-lg-4 col-sm-6">
-            <div class="input-group">
-              <span class="input-group-addon">{{key}}:</span>
-              <input type="text" class="form-control" ng-model="server.mineCraftProp[key]"
-                     placeholder="Place holder..." readonly>
+                <div class="col-lg-4 col-sm-6">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{key}}:</span>
+                    <input type="text" class="form-control" ng-model="server.mineCraftProp[key]"
+                           placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-            </div><!--/input group-->
-          </div><!--/.col-sm-6-->
+                  </div><!--/input group-->
+                </div><!--/.col-sm-6-->
 
-        </div><!--/ng-repeat-->
+              </div><!--/ng-repeat-->
 
-      </div><!--/.row-->
+            </div><!--/.row-->
 
-      <div class="row" id="adminPane" ng-show="nav.isAdmin()">
-        <hr>
-        <h3>Admin Pane</h3>
-        <h4>MSM Strings</h4>
-        <hr>
-        <div ng-repeat="key in srvrManagement.managerKeys">
-          <div class="col-lg-6 col-sm-6">
-            <div class="input-group">
-              <span class="input-group-addon">{{srvrManagement.cleanProperty(key)}}:</span>
-              <input type="text" class="form-control" ng-model="server.msmProp[key]"
-                     placeholder="Place holder..." readonly>
+            <div class="row" id="adminPane" ng-show="nav.isAdmin()">
+              <hr>
+              <h3>Admin Pane</h3>
+              <h4>MSM Strings</h4>
+              <hr>
+              <div ng-repeat="key in srvrManagement.managerKeys">
+                <div class="col-lg-6 col-sm-6">
+                  <div class="input-group">
+                    <span class="input-group-addon">{{srvrManagement.cleanProperty(key)}}:</span>
+                    <input type="text" class="form-control" ng-model="server.msmProp[key]"
+                           placeholder="Place holder..." readonly>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
             </span><!--/span-->
-            </div><!--/input group-->
-          </div><!--/.col-sm-6-->
+                  </div><!--/input group-->
+                </div><!--/.col-sm-6-->
 
-        </div><!--/ng-repeat-->
+              </div><!--/ng-repeat-->
 
-      </div><!--/.row-->
-    </div><!--/ng-repeat-->
-  </div><!--/.row-->
-</div><!--/.container-->
+            </div><!--/.row-->
+
+          </div><!--panel-body-->
+        </div><!--panel-collapse-->
+      </div><!--panel-->
+    </div><!--panel-group-->
+  </div><!--row-->
+</div><!--container-->
+
+
+<footer></footer>
