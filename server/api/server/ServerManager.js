@@ -38,8 +38,26 @@ export default class ServerManager {
     this.intervalID = -1;
     this.maxRestartAttempts = maxRestartAttempts;
     this.restartTime = restartTime;
+    this.startQueue = [];
+    this.restartQueue = [];
+    this.stopQueue = [];
   }
 
+  startServer(id) {
+    if (this.servers[id] !== undefined) {
+      this.startQueue.push(id);
+      return true;
+    }
+    return false;
+  }
+
+  stopServer(id) {
+    if (this.servers[id] !== undefined) {
+      this.stopQueue.push(id);
+      return true;
+    }
+    return false;
+  }
 
   // server = server.model.js object
   addServer(server) {
@@ -143,41 +161,94 @@ export default class ServerManager {
   startMonitor() {
     console.log('Starting Server Monitor.');
     var self = this;
-    this.intervalID = setInterval(function () {
-      // update status of all servers
-      self.updateServersStatus();
-
-      // check if any servers are down
-      for (var serverName in self.serversMap) {
-        var server = self.servers[self.serversMap[serverName]];
-
-        // todo improve handling of different states
-        if (server.state !== 'running' &&
-          server.shouldRestart &&
-          server.status === 'ACTIVE' &&
-          server.restartAttempts < self.maxRestartAttempts) {
-
-          var now = new Date();
-          if (now - server.restartTimeStamp > self.restartTime) {
-
-            var update = {
-              restartTimeStamp: now,
-              restartAttempts: server.restartAttempts + 1,
-              state: "restarting"
-            };
-            self.mongoServer.findById(server._id)
-              .then(saveUpdates(update))
-              .catch(handleError('Todo: Something bad happened here'));
-            self.restartServer(server);
-          }
-
-        }
-      }
-    }, self.pollInterval);
+    this.intervalID = setInterval(self.monitorLoop.bind(this), self.pollInterval);
   }
 
   stopMonitor() {
     clearInterval(this.intervalID);
+  }
+
+  monitorLoop() {
+    // update status of all servers
+    this.updateServersStatus();
+
+    // check if any servers are down - if so schedule them for restart
+    this.checkServers();
+
+    // restart downed servers
+    this.restartServers();
+
+    // start servers in start queue
+    this.startServers();
+
+    // stop servers in stop queue
+    this.stopServers();
+  }
+
+
+  checkServers() {
+    // check if any servers are down
+    for (var serverName in this.serversMap) {
+      var server = this.servers[this.serversMap[serverName]];
+
+      // todo improve handling of different states
+      if (server.state !== 'running' &&
+        server.shouldRestart &&
+        server.status === 'ACTIVE' &&
+        server.restartAttempts < this.maxRestartAttempts) {
+
+        var now = new Date();
+        if (now - server.restartTimeStamp > this.restartTime) {
+
+          var update = {
+            restartTimeStamp: now,
+            restartAttempts: server.restartAttempts + 1,
+            state: "restarting"
+          };
+          this.mongoServer.findById(server._id)
+            .then(saveUpdates(update))
+            .catch(handleError('Todo: Something bad happened here'));
+          this.restartServer(server);
+        } // end if (now - server.restartTimeStamp > this.restartTime)
+
+      } // end if (server.state !== 'running' && ...
+    } // end for (var serverName in this.serversMap)
+  } // end checkServer
+
+  startServers() {
+    var serverId = this.startQueue.shift();
+    var count = 0;
+    while (serverId !== undefined) {
+      count++;
+      this.mongoServer
+        .findByIdAsync(serverId)
+        .then((server)=>MSM.server(server.name).start())
+        .then(saveUpdates({status: 'ACTIVE'}))
+        .catch(handleError('Todo: Something bad happened here'));
+
+      serverId = this.startQueue.shift();
+    }
+  }
+
+  restartServers() {
+    // todo check if server is scheduled to be stopped if so dont try to restart it
+
+  }
+
+  stopServers() {
+    var serverId = this.stopQueue.shift();
+    var count = 0;
+    while (serverId !== undefined) {
+      count++;
+
+      this.mongoServer
+        .findByIdAsync(serverId)
+        .then(saveUpdates({status: 'INACTIVE'}))
+        .then((server)=>MSM.server(server.name).stop())
+        .catch(handleError('Todo: Something bad happened here'));
+
+      serverId = this.stopQueue.shift();
+    }
   }
 }
 

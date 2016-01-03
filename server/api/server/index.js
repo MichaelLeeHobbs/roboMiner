@@ -11,6 +11,8 @@ router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.put('/:id/restart', controller.restart);
+router.put('/:id/start', controller.start);
+router.put('/:id/stop', controller.stop);
 router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 

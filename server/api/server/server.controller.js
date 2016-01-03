@@ -8,6 +8,8 @@
  * POST    /api/servers/:userid      ->  create a server for the user
  * PUT     /api/servers/:id          ->  update
  * PUT     /api/server/:id/restart   ->  restart a server
+ * PUT     /api/server/:id/start     ->  start a server
+ * PUT     /api/server/:id/stop      ->  stop a server
  * DELETE  /api/servers/:id          ->  destroy
  */
 
@@ -167,15 +169,31 @@ Server.find({}).then(servers => {
   })
   .then(() => {
       serverManager.startMonitor();
-      serverManager.serverJSTest("test3")
     }
   )
   .catch((err) => console.log(err));
 
 
+function startServer(res, statusCode) {
+  statusCode = statusCode || 202;
+  return function(entity) {
+    serverManager.startServer(entity._id);
+    return res.status(statusCode).end();
+  }
+}
+
+function stopServer(res, statusCode) {
+  statusCode = statusCode || 202;
+  return function(entity) {
+    serverManager.stopServer(entity._id);
+    return res.status(statusCode).end();
+  }
+}
+
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function (err) {
+    console.log(err);
     res.status(statusCode).send(err);
   };
 }
@@ -258,7 +276,25 @@ export function update(req, res) {
     .then(responseWithResult(res))
     .catch(handleError(res));
 }
+
+// Schedules a Server to be Started
+export function start(req, res) {
+  Server.findByIdAsync(req.params.id)
+    .then(handleEntityNotFound(res))
+    .then(startServer(res))
+    .catch(handleError(res));
+}
+
+// Schedules a Server to be Stopped
+export function stop(req, res) {
+  Server.findByIdAsync(req.params.id)
+    .then(handleEntityNotFound(res))
+    .then(stopServer(res))
+    .catch(handleError(res));
+}
+
 // Restart an existing Server in the DB
+// todo redo this function to use our ServerManager
 export function restart(req, res) {
   var next = function (err, result) {
     if (err) {
@@ -267,7 +303,6 @@ export function restart(req, res) {
       (responseWithResult(res))(result)
     }
   };
-  console.log('restarting ' + req.params.id);
   MSM.server(req.params.id).restart(now = false);
 }
 
