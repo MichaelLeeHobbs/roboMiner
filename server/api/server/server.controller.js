@@ -165,7 +165,11 @@ Server.find({}).then(servers => {
       serverManager.addServer(server)
     })
   })
-  .then(() => serverManager.startMonitor())
+  .then(() => {
+      serverManager.startMonitor();
+      serverManager.serverJSTest("test3")
+    }
+  )
   .catch((err) => console.log(err));
 
 
