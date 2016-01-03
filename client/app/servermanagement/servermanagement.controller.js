@@ -70,8 +70,23 @@
       }
     }
 
+    updateServer(server, update) {
+      if (update !== undefined){
+        this.$http.put('/api/servers/' + server._id, update);
+        return;
+      }
+      this.$http.put('/api/servers/' + server._id, server);
+    }
+
+    startServer(server) {
+      this.$http.put('/api/servers/' + server._id + '/start');
+    }
+    stopServer(server) {
+      this.$http.put('/api/servers/' + server._id + '/stop');
+    }
+
     deleteServer(server) {
-      this.$http.delete('/api/servers/' + server._id);
+      //this.$http.delete('/api/servers/' + server._id);
     }
 
     restartServer(server) {

@@ -78,9 +78,8 @@
                 <div class="input-group">
                   <label class="input-group-addon">Status:</label>
                   <div class="btn-group" ng-model="server.status" bs-radio-group>
-                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ACTIVE"> Active</label>
-                    <label class="btn btn-default"><input type="radio" class="btn btn-default"
-                                                          value="INACTIVE">Inactive</label>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ACTIVE" ng-click="srvrManagement.startServer(server)"> Active</label>
+                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="INACTIVE" ng-click="srvrManagement.stopServer(server)">Inactive</label>
                   </div><!--btn group-->
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
