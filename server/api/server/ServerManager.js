@@ -31,7 +31,6 @@ function handleError(msg) {
 
 export default class ServerManager {
   constructor(mongoServer, maxRestartAttempts = 5, restartTime = 60000, pollInterval = 5000) {
-    console.log('constructor');
     this.mongoServer = mongoServer;
     this.servers = {};
     this.serversMap = {};
@@ -40,6 +39,7 @@ export default class ServerManager {
     this.maxRestartAttempts = maxRestartAttempts;
     this.restartTime = restartTime;
   }
+
 
   // server = server.model.js object
   addServer(server) {
@@ -101,9 +101,9 @@ export default class ServerManager {
           if (self.serversMap.hasOwnProperty(ele.name)) {
             var update = {
               status: ele.status,
-              state: (ele.message === 'Everything is OK.') ? 'running' : 'error',
+              state: ele.state, //(ele.message === 'Everything is OK.') ? 'running' : 'error',
               message: ele.message,
-              stateTimeStamp: new Date(),
+              stateTimeStamp: new Date()
             };
             self.mongoServer
               .findById(self.serversMap[ele.name])
@@ -154,6 +154,7 @@ export default class ServerManager {
         // todo improve handling of different states
         if (server.state !== 'running' &&
           server.shouldRestart &&
+          server.status === 'ACTIVE' &&
           server.restartAttempts < self.maxRestartAttempts) {
 
           var now = new Date();
