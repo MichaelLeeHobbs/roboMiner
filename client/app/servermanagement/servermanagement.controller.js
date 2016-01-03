@@ -8,7 +8,6 @@
       this.$http = $http;
 
       this.servers = [];
-      this.serversModel = [];
       this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
@@ -28,10 +27,26 @@
 
 
       $http.get('/api/servers').then(response => {
-        this.servers = response.data;
-        this.serversModel = this.servers;
-        this.mcKeys = Object.keys(this.servers[1].mineCraftProp);
-        this.managerKeys = Object.keys(this.servers[1].msmProp);
+        var servers = response.data;
+
+
+        console.log(this.servers);
+
+        servers.forEach(function (server) {
+          console.log(server);
+          server.mineCraftProp['rconPassword'] = server.mineCraftProp.rcon.password;
+          server.mineCraftProp['rconPort'] = server.mineCraftProp.rcon.port;
+          server.mineCraftProp['queryPort'] = server.mineCraftProp.query.port;
+          delete server.mineCraftProp.rcon;
+          delete server.mineCraftProp.query;
+          console.log(server);
+        });
+
+        this.mcKeys = Object.keys(servers[1].mineCraftProp);
+        this.managerKeys = Object.keys(servers[1].msmProp);
+        this.servers = servers;
+
+
 
         // sync disable as this breaks the panels
         //socket.syncUpdates('server', this.servers);

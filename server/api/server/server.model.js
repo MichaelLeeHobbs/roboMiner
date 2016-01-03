@@ -14,7 +14,7 @@ var ServerSchema = new mongoose.Schema({
   mineCraftVersion: {type: String, default: "Minecraft_1.8.9"},
   ram: {type: Number, default: 1024},
   state: {type: String, default: "unknown"},              // running, stopped, restarting, error
-  status: {type: String, default: "unknown"},
+  status: {type: String, default: "unknown"},             // INACTIVE, ACTIVE
   message: {type: String, default: ""},
   stateTimeStamp: {type: Date, default: Date.now},        // timestamp of last update
   restartTimeStamp: {type: Date, default: Date.now},
