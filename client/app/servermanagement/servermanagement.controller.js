@@ -5,21 +5,26 @@
   class ServerManagementController {
 
     constructor($http, $scope, socket, Auth) {
+      var self = this;
       this.$http = $http;
+      this.$scope = $scope;
 
       this.servers = [];
       this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
 
-      this.activePanel = -1;
+      this.isEditting = false;
+      this.edittingServer = undefined;
+      this.edittingItem = undefined;
+
+      this.disabledButtons = {};
+
       this.activePanelModel = -1;
 
-      this.panels = {};
-      this.panels.activePanel = -1;
-      this.$scope = $scope;
 
-      var self = this;
+
+
 
       this.isLoggedIn = Auth.isLoggedIn;
       this.isAdmin = Auth.isAdmin;
@@ -41,11 +46,47 @@
         this.managerKeys = Object.keys(servers[1].msmProp);
         this.servers = servers;
 
+        this.servers.forEach(server => {
+          server.btnEdit = {
+            disabled: true,
+            onClick : function (what) {
+              server.btnEdit.disabled = true;
+              server.btnCancel.disabled = false;
+              server.btnSave.disabled = false;
+              self.isEditting = true;
+              self.edittingServer = server._id;
+              self.edittingItem = what;
+            }
+          };
+          server.btnCancel = {
+            disabled: true,
+            onClick : function () {
+              server.btnEdit.disabled  = false;
+              server.btnCancel.disabled = true;
+              server.btnSave.disabled  = true;
+              self.isEditting = false;
+              self.edittingServer = undefined;
+              self.edittingItem = undefined;
+            }
+          };
+          server.btnSave = {
+            disabled: true,
+            onClick : function () {
+              server.btnEdit.disabled  = false;
+              server.btnCancel.disabled = true;
+              server.btnSave.disabled  = true;
+              self.isEditting = false;
+              self.edittingServer = undefined;
+              self.edittingItem = undefined;
+            }
+          }; // end server.btnSave
+        }); // end this.servers.forEach(server => {
+
 
 
         // sync disable as this breaks the panels
         //socket.syncUpdates('server', this.servers);
-      });
+      }); // end $http.get('/api/servers').then(response => {
 
       $http.get('/api/servers/keys').then(response => {
         this.serverKeys = response.data;

@@ -40,7 +40,7 @@
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">State:</span>
-                  <input type="text" class="form-control" ng-model="server.state" placeholder="Place holder..." readonly>
+                  <input type="text" class="form-control" ng-model="server.state" placeholder="Place holder..." ng-readonly="serverManager.isEditting !== server._id + 'settings'">
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
@@ -71,9 +71,17 @@
 
             <div class="row">
               <hr>
-              <h4>Settings And Information</h4>
-              <hr>
+              <div class="col-sm-3 col-xs-1"></div>
+              <div class="col-sm-6 col-xs-11"><h4>Settings And Information</h4></div>
+              <div class="col-sm-3 col-xs-12">
+                <button class="btn btn-primary pull-right" type="button" ng-click="server.btnCancel.onClick()" ng-disabled="server.btnCancel.disabled"><i class="fa fa-ban"></i></button>
+                <button class="btn btn-primary pull-right" type="button" ng-click="server.btnSave.onClick()" ng-disabled="server.btnSave.disabled"><i class="fa fa-floppy-o"></i></button>
+                <button class="btn btn-primary pull-right" type="button" ng-click="server.btnEdit.onClick('settings')" ng-disabled="srvrManagement.isEditting"><i class="fa fa-pencil"></i></button>
+              </div>
+            </div>
 
+            <div class="row">
+              <hr>
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <label class="input-group-addon">Status:</label>
@@ -98,11 +106,7 @@
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">Name:</span>
-                  <input type="text" class="form-control" ng-model="server.name" placeholder="Place holder..." readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
-            </span><!--/span-->
-
+                  <input type="text" class="form-control" ng-model="server.name" placeholder="Place holder..." ng-readonly="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
@@ -133,7 +137,7 @@
                   <span class="input-group-addon">Port:</span>
                   <input type="text" class="form-control" ng-model="server.port" placeholder="Place holder..." readonly>
             <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
+              <button class="btn btn-primary" type="button"><i class="fa fa-cog"></i></button>
             </span><!--/span-->
                 </div><!--/input group-->
               </div><!--/.col-sm-6-->
@@ -143,9 +147,6 @@
                   <span class="input-group-addon">MineCraft Version:</span>
                   <input type="text" class="form-control" ng-model="server.mineCraftVersion" placeholder="Place holder..."
                          readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
-            </span><!--/span-->
                 </div><!--/input group-->
               </div><!--/.col-sm-6-->
 
@@ -156,7 +157,7 @@
                   <input type="text" class="form-control" ng-model="server.serverManagerId" placeholder="Place holder..."
                          readonly>
             <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
+              <button class="btn btn-primary" type="button"><i class="fa fa-cog"></i></button>
             </span><!--/span-->
                 </div><!--/input group-->
               </div><!--/.col-sm-6-->
@@ -165,10 +166,7 @@
                 <div class="input-group">
                   <span class="input-group-addon">Stop Delay:</span>
                   <input type="text" class="form-control" ng-model="server.msmProp['msm-stop-delay']"
-                         placeholder="Place holder..." readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
-            </span><!--/span-->
+                         placeholder="Place holder..." ng-readonly="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
                 </div><!--/input group-->
               </div><!--/.col-sm-6-->
 
@@ -176,10 +174,7 @@
                 <div class="input-group">
                   <span class="input-group-addon">Restart Delay:</span>
                   <input type="text" class="form-control" ng-model="server.msmProp['msm-restart-delay']"
-                         placeholder="Place holder..." readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-pencil"></i></button>
-            </span><!--/span-->
+                         placeholder="Place holder..." ng-readonly="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
                 </div><!--/input group-->
               </div><!--/.col-sm-6-->
 
