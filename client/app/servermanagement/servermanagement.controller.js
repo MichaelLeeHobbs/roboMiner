@@ -3,13 +3,14 @@
 (function () {
 
   class ServerManagementController {
+    var self = this;
 
     constructor($http, $scope, socket, Auth) {
-      var self = this;
       this.$http = $http;
       this.$scope = $scope;
 
       this.servers = [];
+      this.serverAddons = [];
       this.serverKeys = [];
       this.mcKeys = [];
       this.managerKeys = [];
@@ -21,10 +22,6 @@
       this.disabledButtons = {};
 
       this.activePanelModel = -1;
-
-
-
-
 
       this.isLoggedIn = Auth.isLoggedIn;
       this.isAdmin = Auth.isAdmin;
@@ -47,42 +44,8 @@
         this.servers = servers;
 
         this.servers.forEach(server => {
-          server.btnEdit = {
-            disabled: true,
-            onClick : function (what) {
-              server.btnEdit.disabled = true;
-              server.btnCancel.disabled = false;
-              server.btnSave.disabled = false;
-              self.isEditting = true;
-              self.edittingServer = server._id;
-              self.edittingItem = what;
-            }
-          };
-          server.btnCancel = {
-            disabled: true,
-            onClick : function () {
-              server.btnEdit.disabled  = false;
-              server.btnCancel.disabled = true;
-              server.btnSave.disabled  = true;
-              self.isEditting = false;
-              self.edittingServer = undefined;
-              self.edittingItem = undefined;
-            }
-          };
-          server.btnSave = {
-            disabled: true,
-            onClick : function () {
-              server.btnEdit.disabled  = false;
-              server.btnCancel.disabled = true;
-              server.btnSave.disabled  = true;
-              self.isEditting = false;
-              self.edittingServer = undefined;
-              self.edittingItem = undefined;
-            }
-          }; // end server.btnSave
+          self.injectButtons(server, self);
         }); // end this.servers.forEach(server => {
-
-
 
         // sync disable as this breaks the panels
         //socket.syncUpdates('server', this.servers);
@@ -96,6 +59,57 @@
         socket.unsyncUpdates('server');
       });
     }
+
+    injectButtons(server) {
+      server.btn = {};
+      server.btn.edit = {
+        disabled: false,
+        onClick : function (what) {
+          server.btn.edit.disabled = true;
+          server.btn.cancel.disabled = false;
+          server.btn.save.disabled = false;
+          self.isEditting = true;
+          self.edittingServer = server._id;
+          self.edittingItem = what;
+        }
+      }; // end server.btn.edit
+      server.btn.cancel = {
+        disabled: true,
+        onClick : function () {
+          server.btn.edit.disabled  = false;
+          server.btn.cancel.disabled = true;
+          server.btn.save.disabled  = true;
+          self.isEditting = false;
+          self.edittingServer = undefined;
+          self.edittingItem = undefined;
+        }
+      }; // end server.btn.cancel
+      server.btn.save = {
+        disabled: true,
+        onClick : function () {
+          server.btn.edit.disabled  = false;
+          server.btn.cancel.disabled = true;
+          server.btn.save.disabled  = true;
+          self.isEditting = false;
+          self.edittingServer = undefined;
+          self.edittingItem = undefined;
+        }
+      }; // end server.btn.save
+      server.btn.host = {
+        disabled: false,
+        onClick: function () {
+          // todo impliment host button
+        }
+      }; // end server.btn.host
+      server.btn.port = {
+        disabled: false,
+        onClick: function () {
+          // todo impliment port button
+        }
+      }; // end server.btn.port
+    };
+
+
 
     cleanProperty(prop) {
       prop = prop.replace('msm-', '');
