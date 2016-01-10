@@ -4,7 +4,10 @@
     <div class="col-lg-12">
       <h1 class="page-header">Features:</h1>
       <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="server in srvrManagement.servers">
-        <li><a href="#" tooltip="{{server.message}}">{{server.name}}
+
+        <!--todo fix<li><a href="#" tooltip="{{server.message}}">{{server.name}}-->
+        <li><a href="#">{{server.name}}
+
           <button type="button" class="close" ng-click="srvrManagement.restartServer(server)">&times;</button>
         </a></li>
       </ul>
@@ -41,33 +44,28 @@
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">State:</span>
-                  <input type="text" class="form-control" ng-model="server.state" placeholder="Place holder..."
-                         ng-readonly="serverManager.isEditting !== server._id + 'settings'">
+                  <input type="text" class="form-control" ng-model="server.state" readonly>
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">Report:</span>
-                  <input type="text" class="form-control" ng-model="server.message" placeholder="Place holder..."
-                         readonly>
+                  <input type="text" class="form-control" ng-model="server.message" readonly>
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">Restart Attempts:</span>
-                  <input type="text" class="form-control" ng-model="server.restartAttempts"
-                         placeholder="Place holder..."
-                         readonly>
+                  <input type="text" class="form-control" ng-model="server.restartAttempts" readonly>
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
               <div class="col-lg-3 col-sm-6">
                 <div class="input-group">
                   <span class="input-group-addon">Restart Count:</span>
-                  <input type="text" class="form-control" ng-model="server.restartCount" placeholder="Place holder..."
-                         readonly>
+                  <input type="text" class="form-control" ng-model="server.restartCount" readonly>
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
 
@@ -78,11 +76,16 @@
               <div class="col-sm-3 col-xs-1"></div>
               <div class="col-sm-6 col-xs-11"><h4>Settings And Information</h4></div>
               <div class="col-sm-3 col-xs-12">
-                <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.cancel.onClick()"
-                        ng-disabled="server.btn.cancel.disabled"><i class="fa fa-ban"></i></button>
-                <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.save.onClick()"
-                        ng-disabled="server.btn.save.disabled"><i class="fa fa-floppy-o"></i></button>
-                <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.edit.onClick('settings')"
+                <button class="btn btn-primary pull-right" type="button"
+                        ng-click="server.btn.cancel.onClick()"
+                        ng-disabled="server.btn.cancel.disabled || srvrManagement.edittingItem !== 'settings'"><i
+                  class="fa fa-ban"></i></button>
+                <button class="btn btn-primary pull-right" type="button"
+                        ng-click="server.btn.save.onClick()"
+                        ng-disabled="server.btn.save.disabled || srvrManagement.edittingItem !== 'settings'"><i
+                  class="fa fa-floppy-o"></i></button>
+                <button class="btn btn-primary pull-right" type="button"
+                        ng-click="server.btn.edit.onClick('settings')"
                         ng-disabled="srvrManagement.isEditting"><i class="fa fa-pencil"></i></button>
               </div>
             </div>
@@ -94,9 +97,11 @@
                   <label class="input-group-addon">Status:</label>
                   <div class="btn-group" ng-model="server.status" bs-radio-group>
                     <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ACTIVE"
-                                                          ng-click="srvrManagement.startServer(server)"> Active</label>
+                                                          ng-click="server.btn.startServer.onClick(server)"
+                                                          ng-disabled="server.btn.startServer.disabled"> Active</label>
                     <label class="btn btn-default"><input type="radio" class="btn btn-default" value="INACTIVE"
-                                                          ng-click="srvrManagement.stopServer(server)">Inactive</label>
+                                                          ng-click="server.btn.stopServer.onClick(server)"
+                                                          ng-disabled="server.btn.stopServer.disabled">Inactive</label>
                   </div><!--btn group-->
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
@@ -105,12 +110,12 @@
                 <div class="input-group">
                   <label class="input-group-addon">Restart On Failiure?</label>
                   <div class="btn-group" ng-model="server.shouldRestart" bs-radio-group>
-                    <label class="btn btn-default"><input type="radio" class="btn btn-default" value="true"
-                                                          ng-disabled="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
-                      Yes</label>
-                    <label class="btn btn-default"><input type="radio" class="btn btn-default"
-                                                          value="false"
-                                                          ng-disabled="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">No</label>
+                    <label class="btn btn-default btn-disable"
+                           ng-disabled="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
+                      <input type="radio" class="btn btn-default" value="true">Yes</label>
+                    <label class="btn btn-default"
+                           ng-disabled="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'settings'">
+                      <input type="radio" class="btn btn-default btn-disable" value="false">No</label>
                   </div><!--btn group-->
                 </div><!--input group-->
               </div><!--/.col-sm-6-->
@@ -208,15 +213,17 @@
               <div class="col-sm-6 col-xs-11"><h4>Server Messages</h4></div>
               <div class="col-sm-3 col-xs-12">
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.cancel.onClick()"
-                        ng-disabled="server.btn.cancel.disabled"><i class="fa fa-ban"></i></button>
+                        ng-disabled="server.btn.cancel.disabled || srvrManagement.edittingItem !== 'messages'"><i
+                  class="fa fa-ban"></i></button>
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.save.onClick()"
-                        ng-disabled="server.btn.save.disabled"><i class="fa fa-floppy-o"></i></button>
+                        ng-disabled="server.btn.save.disabled || srvrManagement.edittingItem !== 'messages'"><i
+                  class="fa fa-floppy-o"></i></button>
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.edit.onClick('messages')"
                         ng-disabled="srvrManagement.isEditting"><i class="fa fa-pencil"></i></button>
               </div>
             </div>
 
-            <div class="row">
+            <div class="row"> <!-- Server Messages Body -->
               <hr>
 
               <div class="col-lg-6 col-sm-12">
@@ -304,9 +311,11 @@
               <div class="col-sm-6 col-xs-11"><h4>MineCraft server.properties:</h4></div>
               <div class="col-sm-3 col-xs-12">
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.cancel.onClick()"
-                        ng-disabled="server.btn.cancel.disabled"><i class="fa fa-ban"></i></button>
+                        ng-disabled="server.btn.cancel.disabled || srvrManagement.edittingItem !== 'properties'"><i
+                  class="fa fa-ban"></i></button>
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.save.onClick()"
-                        ng-disabled="server.btn.save.disabled"><i class="fa fa-floppy-o"></i></button>
+                        ng-disabled="server.btn.save.disabled || srvrManagement.edittingItem !== 'properties'"><i
+                  class="fa fa-floppy-o"></i></button>
                 <button class="btn btn-primary pull-right" type="button"
                         ng-click="server.btn.edit.onClick('properties')"
                         ng-disabled="srvrManagement.isEditting"><i class="fa fa-pencil"></i></button>
@@ -339,9 +348,11 @@
                 <h4>MSM Strings</h4></div>
               <div class="col-sm-3 col-xs-12">
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.cancel.onClick()"
-                        ng-disabled="server.btn.cancel.disabled"><i class="fa fa-ban"></i></button>
+                        ng-disabled="server.btn.cancel.disabled || srvrManagement.edittingItem !== 'msm'"><i
+                  class="fa fa-ban"></i></button>
                 <button class="btn btn-primary pull-right" type="button" ng-click="server.btn.save.onClick()"
-                        ng-disabled="server.btn.save.disabled"><i class="fa fa-floppy-o"></i></button>
+                        ng-disabled="server.btn.save.disabled || srvrManagement.edittingItem !== 'msm'"><i
+                  class="fa fa-floppy-o"></i></button>
                 <button class="btn btn-primary pull-right" type="button"
                         ng-click="server.btn.edit.onClick('msm')"
                         ng-disabled="srvrManagement.isEditting"><i class="fa fa-pencil"></i></button>
@@ -355,7 +366,8 @@
                   <div class="input-group">
                     <span class="input-group-addon">{{srvrManagement.cleanProperty(key)}}:</span>
                     <input type="text" class="form-control" ng-model="server.msmProp[key]"
-                           placeholder="Place holder..." ng-readonly="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'msm'">
+                           placeholder="Place holder..."
+                           ng-readonly="srvrManagement.edittingServer !== server._id || srvrManagement.edittingItem !== 'msm'">
                   </div><!--/input group-->
                 </div><!--/.col-sm-6-->
               </div><!--/ng-repeat-->

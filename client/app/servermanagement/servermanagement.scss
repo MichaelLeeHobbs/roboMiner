@@ -29,3 +29,8 @@
     animation-name: expand;
   }
 }
+
+.btn-disable[disabled] {
+  cursor: not-allowed;
+  background-color: #EEEEEE;
+}
