@@ -1,6 +1,3 @@
-[submodule "server/msm.js"]
-	path = server/msm.js
-	url = https://github.com/MichaelLeeHobbs/msm.js.git
 [submodule "server/libraries/msm.js"]
 	path = server/libraries/msm.js
 	url = https://github.com/MichaelLeeHobbs/msm.js.git
