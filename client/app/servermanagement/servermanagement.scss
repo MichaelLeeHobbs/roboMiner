@@ -32,5 +32,6 @@
 
 .btn-disable[disabled] {
   cursor: not-allowed;
+  pointer-events: all !important;
   background-color: #EEEEEE;
 }
