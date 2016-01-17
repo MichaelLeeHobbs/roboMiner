@@ -11,6 +11,8 @@
 
 import _ from 'lodash';
 var World = require('./world.model');
+const fs = require('fs');
+import move from '../../libraries/fsMove.js';
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
@@ -76,9 +78,23 @@ export function show(req, res) {
 
 // Creates a new World in the DB
 export function create(req, res) {
-  World.createAsync(req.body)
-    .then(responseWithResult(res, 201))
-    .catch(handleError(res));
+  // We are able to access req.files.file thanks to
+  // the multiparty middleware
+  var file = req.files.file;
+  console.log(file.name);
+  console.log(file.type);
+  console.log(file.path);
+  console.log(__dirname);
+  move(file.path, __dirname + '/../../uploads/worlds/' + file.originalFilename, function(err){
+    if (err) {
+      console.log(err);
+      handleError(res)(err);
+      return;
+    }
+    World.createAsync(req.body)
+      .then(responseWithResult(res, 201))
+      .catch(handleError(res));
+  });
 }
 
 // Updates an existing World in the DB

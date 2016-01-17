@@ -7,6 +7,7 @@ angular.module('roboMinerApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
+  'ngFileUpload',
   'btford.socket-io',
   'ui.router',
   'ui.bootstrap',
