@@ -27,6 +27,7 @@ module.exports = function(config) {
       'client/bower_components/ng-file-upload/ng-file-upload.js',
       'client/bower_components/ng-file-upload-shim/ng-file-upload-shim.js',
       'client/bower_components/jszip/dist/jszip.js',
+      'client/bower_components/jszip-utils/dist/jszip-utils.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'node_modules/socket.io-client/socket.io.js',
