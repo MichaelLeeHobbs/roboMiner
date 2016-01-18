@@ -8,6 +8,9 @@ class NavbarController {
   },{
     'title': 'My Servers',
     'state': 'srvrManagement'
+  },{
+    'title': 'World Manager',
+    'state': 'worldManager'
   }];
 
   isCollapsed = true;
