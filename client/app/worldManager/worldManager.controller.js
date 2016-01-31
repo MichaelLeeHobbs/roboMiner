@@ -92,14 +92,12 @@ angular.module('roboMinerApp')
         return
       }
 
-
       // todo support more zip types
-      console.debug(files);
+
       // get the folder to zip
       let folders = {};
       let zipFiles = [];
       files.forEach((file, i, arr) => {
-        console.debug(file);
 
         // if zip then put it in our zip file collection to be handled separately
         if (zipTools.getZipType(file) === 'zip') {
@@ -124,30 +122,30 @@ angular.module('roboMinerApp')
       });
 
       zipTools.zipFolders(folders).then((zipObjects) => {
-        console.log(zipObjects);
         let uploads = zipObjects.concat(zipFiles);
-        console.log(uploads);
         uploads.forEach((uploadObj) =>{
-          Upload.upload({
-            url: '/api/worlds',
-            data: {
-              username: $scope.username,
-              file: uploadObj.blob
-            }
-          }).then(function (resp) {
-            $timeout(function () {
-              $scope.log = 'file: ' +
-                resp.config.data.file.name +
-                ', Response: ' + JSON.stringify(resp.data) +
-                '\n' + $scope.log;
+          zipTools.md5Blob(uploadObj.blob).then((md5) => {
+            Upload.upload({
+              url: '/api/worlds',
+              method: 'POST',
+              file: uploadObj.blob,
+              data: { md5: md5.toString() }
+            }).then(function (resp) {
+              $timeout(function () {
+                $scope.log = 'file: ' +
+                  resp.config.data.file.name +
+                  ', Response: ' + JSON.stringify(resp.data) +
+                  '\n' + $scope.log;
+              });
+            }, null, function (evt) {
+              var progressPercentage = parseInt(100.0 *
+                evt.loaded / evt.total);
+              $scope.log = 'progress: ' + progressPercentage +
+                '% ' + evt.config.data.file.name + '\n' +
+                $scope.log;
             });
-          }, null, function (evt) {
-            var progressPercentage = parseInt(100.0 *
-              evt.loaded / evt.total);
-            $scope.log = 'progress: ' + progressPercentage +
-              '% ' + evt.config.data.file.name + '\n' +
-              $scope.log;
-          });
+          })
+
         })
 
       });
