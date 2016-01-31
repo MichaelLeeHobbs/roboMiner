@@ -119,21 +119,31 @@ class ZipTools {
       let results = [];
       Promise.all(promoiseCollection).then(() => {
         zipFiles.forEach((zipFile) => {
-          console.log(zipFiles)
           let blob =  zipFile.generate({type: 'blob', compression: "DEFLATE"});
           blob.name = zipFile.name;
           blob.lastModifiedDate = new Date();
-          results.push({ name: zipFile.name, blob: blob })
-          console.log(results);
+          results.push({ name: zipFile.name, blob: blob});
         });
       }).then(()=>{
-        console.log(results);
         resolve(results);
       });
     })
   }
-
+  md5Blob(blob) {
+    var reader = new FileReader();
+    reader.readAsBinaryString(blob);
+    return new Promise((resolve, reject) => {
+      reader.onloadend = function () {
+        let md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(reader.result)).toString();
+        resolve(md5);
+      };
+      reader.onerror = function (error) {
+        reject(error);
+      };
+    });
+  }
 
 }
 
 //module.exports = ZipTools;
+
